@@ -1,0 +1,173 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Driver Dashboard | ChargeEase</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Plus+Jakarta+Sans:wght@500;600;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css">
+  <link rel="stylesheet" href="/css/style.css">
+</head>
+<body class="app-page">
+  <header class="app-header">
+    <a class="brand" href="/" aria-label="ChargeEase Home">
+      <span class="brand-mark">⚡</span>
+      <span>ChargeEase</span>
+    </a>
+    <div class="user-nav">
+      <button class="header-link" onclick="openNotifications()" title="Notifications" aria-label="Notifications">
+        🔔 <span id="notificationBadge" class="notification-badge">0</span>
+      </button>
+      <span id="welcomeUser"></span>
+      <button class="avatar" id="avatar" title="Account profile">U</button>
+      <button class="icon-btn" onclick="logout()" title="Sign out" aria-label="Sign out">↪</button>
+    </div>
+  </header>
+
+  <main class="dashboard">
+    <section class="dashboard-title">
+      <div>
+        <span class="eyebrow">⚡ DRIVER DASHBOARD</span>
+        <h1><span id="greetingText">Good to see you</span>, <span id="userName">there</span>.</h1>
+        <p>Find an open charger, predict wait times, reserve your guaranteed slot, and keep your journey powered.</p>
+      </div>
+      <div class="title-actions">
+        <button class="btn btn-light" onclick="openVehicles()">🚗 My Garage</button>
+        <button class="btn btn-primary" onclick="document.getElementById('stationSearch').focus()">Find a charger →</button>
+      </div>
+    </section>
+
+    <section class="metric-grid user-metrics">
+      <div class="metric-card">
+        <span class="metric-icon">⚡</span>
+        <small>Available Chargers</small>
+        <b id="availableCount">—</b>
+      </div>
+      <div class="metric-card">
+        <span class="metric-icon">◷</span>
+        <small>My Reservations</small>
+        <b id="reservationCount">—</b>
+      </div>
+      <div class="metric-card">
+        <span class="metric-icon">♧</span>
+        <small>Queue Position</small>
+        <b id="queueCount">—</b>
+      </div>
+      <div class="metric-card">
+        <span class="metric-icon">★</span>
+        <small>Payment History</small>
+        <b id="paymentCount">—</b>
+      </div>
+    </section>
+
+    <section class="dashboard-grid">
+      <div class="main-column">
+        <div class="panel">
+          <div class="panel-head">
+            <div>
+              <span class="eyebrow">SMART DISCOVERY</span>
+              <h2>Charging stations</h2>
+              <p>Verified charging hubs, live connector availability, queue status and instant reservation.</p>
+            </div>
+            <button class="btn btn-light btn-sm" onclick="loadDashboard()">↻ Refresh</button>
+          </div>
+          <div class="filter-row filter-grid">
+            <input id="stationSearch" class="search-input" placeholder="⌕ Search station, address or city…" aria-label="Search station">
+            <select id="availabilityFilter" aria-label="Availability filter">
+              <option value="all">All stations</option>
+              <option value="available">Available now</option>
+            </select>
+            <select id="connectorFilter" aria-label="Connector type filter">
+              <option value="">Any connector</option>
+              <option>CCS2</option>
+              <option>Type 2</option>
+              <option>CHAdeMO</option>
+              <option>GB/T</option>
+            </select>
+            <select id="powerFilter" aria-label="Power rating filter">
+              <option value="0">Any power</option>
+              <option value="7">7+ kW (AC)</option>
+              <option value="22">22+ kW (Fast)</option>
+              <option value="50">50+ kW (DC Fast)</option>
+              <option value="100">100+ kW (Ultra)</option>
+            </select>
+          </div>
+          <div class="user-map" id="map"></div>
+          <div id="stations" class="station-list dashboard-list"></div>
+        </div>
+
+        <div class="panel ai-panel">
+          <div class="panel-head">
+            <div>
+              <span class="eyebrow">AI / ML INTELLIGENCE</span>
+              <h2>Smart charging recommendation</h2>
+              <p>Ranked by vehicle compatibility, live plug availability, queue wait, demand patterns, and rate.</p>
+            </div>
+            <button class="btn btn-primary btn-sm" onclick="loadRecommendations()">✨ Refresh match</button>
+          </div>
+          <div id="recommendations" class="recommendation-list">
+            <div class="empty">Add a vehicle in your garage to receive tailored ML charging recommendations.</div>
+          </div>
+        </div>
+
+        <div class="panel">
+          <div class="panel-head">
+            <div>
+              <span class="eyebrow">BOOKING HISTORY</span>
+              <h2>My reservations</h2>
+              <p>View upcoming reservations, charge duration estimates, and instant simulated payments.</p>
+            </div>
+          </div>
+          <div id="reservations" class="reservation-list">
+            <div class="loading">Loading reservations…</div>
+          </div>
+        </div>
+      </div>
+
+      <aside class="side-column">
+        <div class="panel compact-panel">
+          <div class="panel-head">
+            <div>
+              <h2>Live queue</h2>
+              <p>Your real-time virtual queue ticket.</p>
+            </div>
+          </div>
+          <div id="queue" class="queue-list">
+            <div class="loading">Checking queue status…</div>
+          </div>
+        </div>
+
+        <div class="panel compact-panel">
+          <div class="panel-head">
+            <div>
+              <h2>Notifications</h2>
+              <p>Live status & booking updates.</p>
+            </div>
+          </div>
+          <div id="notifications" class="notification-list">
+            <div class="loading">Loading notifications…</div>
+          </div>
+        </div>
+
+        <div class="panel compact-panel">
+          <div class="panel-head">
+            <div>
+              <h2>Support</h2>
+              <p>Need assistance or have feedback?</p>
+            </div>
+          </div>
+          <button class="btn btn-light btn-wide" onclick="openComplaint()">Create support request</button>
+          <div id="complaints" class="complaint-list" style="margin-top:12px;"></div>
+        </div>
+      </aside>
+    </section>
+  </main>
+
+  <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+  <script src="/js/common.js"></script>
+  <script src="/js/map.js"></script>
+  <script src="/js/user.js"></script>
+</body>
+</html>

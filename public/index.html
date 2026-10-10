@@ -1,0 +1,121 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>ChargeEase | Smart EV Charging & Reservations</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Plus+Jakarta+Sans:wght@500;600;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css">
+  <link rel="stylesheet" href="/css/style.css">
+</head>
+<body class="landing">
+  <header class="site-header">
+    <a class="brand" href="/" aria-label="ChargeEase Home">
+      <span class="brand-mark">⚡</span>
+      <span>ChargeEase</span>
+    </a>
+    <nav class="top-nav" aria-label="Main Navigation">
+      <a href="#stations">Stations</a>
+      <a href="#how">How it works</a>
+      <a href="/login.html" class="nav-login">Sign in</a>
+      <a href="/register.html" class="btn btn-primary btn-sm">Get started</a>
+    </nav>
+  </header>
+
+  <main>
+    <section class="hero-wrap">
+      <div class="hero-copy">
+        <span class="eyebrow">⚡ SMART EV CHARGING • REAL-TIME RESERVATIONS</span>
+        <h1>Charge when you want.<br><span>Drive with confidence.</span></h1>
+        <p>Discover verified charging stations, see live charger availability, reserve a guaranteed time slot, or join the virtual queue — all from one effortless dashboard.</p>
+        <div class="hero-actions">
+          <a href="/register.html" class="btn btn-primary">Find a charger <span>→</span></a>
+          <a href="#stations" class="btn btn-ghost">Explore stations</a>
+        </div>
+        <div class="trust-row">
+          <span>✓ Verified station network</span>
+          <span>✓ Guaranteed slot reservations</span>
+          <span>✓ Live queue intelligence</span>
+        </div>
+      </div>
+      <div class="hero-card">
+        <div class="hero-card-top">
+          <span class="live-dot"></span>
+          <span>Charging network</span>
+          <span class="live-label">LIVE VIEW</span>
+        </div>
+        <div class="mini-map" id="heroMap"></div>
+        <div class="hero-floating">
+          <div class="mini-icon">⚡</div>
+          <div>
+            <b id="heroCount">—</b>
+            <small>approved stations</small>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="section" id="stations">
+      <div class="section-heading">
+        <div>
+          <span class="eyebrow">NETWORK EXPLORER</span>
+          <h2>Find your next charging stop</h2>
+          <p>Browse verified stations, compare rates, and check live charger availability before you travel.</p>
+        </div>
+        <a href="/login.html" class="text-link">Open dashboard →</a>
+      </div>
+      <div class="network-layout">
+        <div class="map-card">
+          <div id="map"></div>
+          <div class="map-note">Map data © OpenStreetMap contributors</div>
+        </div>
+        <div class="station-panel">
+          <div class="filter-row">
+            <input id="stationSearch" class="search-input" placeholder="⌕  Search station, city or area…" aria-label="Search station">
+            <select id="availabilityFilter" aria-label="Filter availability">
+              <option value="all">All stations</option>
+              <option value="available">Available now</option>
+            </select>
+          </div>
+          <div id="stationsList" class="station-list">
+            <div class="loading">Loading stations…</div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="feature-strip" id="how">
+      <div>
+        <span class="feature-no">01</span>
+        <h3>Discover</h3>
+        <p>Explore verified charging locations on an interactive live map with real-time plug availability and pricing.</p>
+      </div>
+      <div>
+        <span class="feature-no">02</span>
+        <h3>Reserve</h3>
+        <p>Select your exact connector type, book an upcoming slot, and get estimated charge duration powered by AI.</p>
+      </div>
+      <div>
+        <span class="feature-no">03</span>
+        <h3>Queue</h3>
+        <p>No waiting in physical lines. Join the live virtual queue from anywhere and track your live turn in real time.</p>
+      </div>
+    </section>
+  </main>
+
+  <footer class="site-footer">
+    <div>
+      <b style="display:flex; align-items:center; gap:8px; font-size:16px;">⚡ ChargeEase</b>
+      <span style="display:block; margin-top:4px;">Smart EV Charging Queue & Slot Reservation Platform</span>
+    </div>
+    <span>Prototype • Engineered for reliable, effortless electric mobility</span>
+  </footer>
+
+  <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+  <script src="/js/common.js"></script>
+  <script src="/js/map.js"></script>
+  <script src="/js/home.js"></script>
+</body>
+</html>
