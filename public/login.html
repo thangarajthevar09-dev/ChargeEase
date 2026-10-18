@@ -1,0 +1,60 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Sign in | ChargeEase</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Plus+Jakarta+Sans:wght@500;600;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="/css/style.css">
+</head>
+<body class="auth-page">
+  <div class="auth-shell">
+    <a class="brand auth-brand" href="/" aria-label="ChargeEase Home">
+      <span class="brand-mark">⚡</span>
+      <span>ChargeEase</span>
+    </a>
+    <div class="auth-grid">
+      <section class="auth-art">
+        <span class="eyebrow">WELCOME BACK</span>
+        <h1>Your next charge starts right here.</h1>
+        <p>Seamlessly manage your EV reservations, live queue status, and station controls from a unified dashboard.</p>
+        <div class="auth-points">
+          <span>✓ Verified nationwide charging network</span>
+          <span>✓ Guaranteed slot bookings with zero wait</span>
+          <span>✓ Real-time charger availability & AI analytics</span>
+        </div>
+      </section>
+
+      <section class="auth-card">
+        <div class="auth-head">
+          <span class="eyebrow">ACCOUNT</span>
+          <h2>Sign in</h2>
+          <p>Enter your credentials to access your dashboard.</p>
+        </div>
+        <form id="login" class="form">
+          <label>
+            Email
+            <input name="email" type="email" autocomplete="email" placeholder="you@example.com" required>
+          </label>
+          <label>
+            Password
+            <div class="password-wrap">
+              <input id="password" name="password" type="password" autocomplete="current-password" placeholder="Enter your password" required>
+              <button type="button" class="eye" onclick="togglePassword()">Show</button>
+            </div>
+          </label>
+          <button type="submit" class="btn btn-primary btn-wide">Sign in <span>→</span></button>
+        </form>
+        <div id="msg" class="form-msg"></div>
+
+        <p class="auth-switch">New to ChargeEase? <a href="/register.html">Create an account</a></p>
+      </section>
+    </div>
+  </div>
+
+  <script src="/js/common.js"></script>
+  <script src="/js/login.js"></script>
+</body>
+</html>

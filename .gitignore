@@ -1,0 +1,36 @@
+# Environment secrets
+.env
+.env.*
+!.env.example
+
+# Node.js dependencies
+node_modules/
+
+# Python virtual environment
+.venv/
+venv/
+
+# Python cache
+__pycache__/
+*.py[cod]
+
+# User-uploaded documents and files
+uploads/*
+!uploads/.gitkeep
+!uploads/chargers/
+!uploads/documents/
+!uploads/stations/
+uploads/chargers/*
+uploads/documents/*
+uploads/stations/*
+!uploads/chargers/.gitkeep
+!uploads/documents/.gitkeep
+!uploads/stations/.gitkeep
+
+# Local logs
+*.log
+npm-debug.log*
+
+# Operating system files
+.DS_Store
+Thumbs.db

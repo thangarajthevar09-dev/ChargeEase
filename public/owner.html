@@ -1,0 +1,284 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Station Owner Portal | ChargeEase</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Plus+Jakarta+Sans:wght@500;600;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css">
+  <link rel="stylesheet" href="/css/style.css">
+</head>
+<body class="app-page">
+  <header class="app-header">
+    <a class="brand" href="/" aria-label="ChargeEase Home">
+      <span class="brand-mark">⚡</span>
+      <span>ChargeEase <em>OWNER</em></span>
+    </a>
+    <div class="user-nav">
+      <span id="ownerName"></span>
+      <button class="avatar" id="avatar" title="Owner profile">O</button>
+      <button class="icon-btn" onclick="logout()" title="Sign out" aria-label="Sign out">↪</button>
+    </div>
+  </header>
+
+  <main class="dashboard">
+    <section class="dashboard-title">
+      <div>
+        <span class="eyebrow">⚡ STATION OWNER CONSOLE</span>
+        <h1>Manage your charging network.</h1>
+        <p>Monitor live pump availability, process customer queues, and track business revenue.</p>
+      </div>
+      <button id="addStationBtn" class="btn btn-primary" onclick="scrollToForm()">+ Register Station</button>
+    </section>
+
+    <section class="metric-grid">
+      <div class="metric-card">
+        <span class="metric-icon">⌂</span>
+        <small>My Stations</small>
+        <b id="stationCount">—</b>
+      </div>
+      <div class="metric-card">
+        <span class="metric-icon">⚡</span>
+        <small>Total Chargers</small>
+        <b id="chargerCount">—</b>
+      </div>
+      <div class="metric-card">
+        <span class="metric-icon">●</span>
+        <small>Available Now</small>
+        <b id="ownerAvailable">—</b>
+      </div>
+      <div class="metric-card">
+        <span class="metric-icon">♧</span>
+        <small>Waiting Queue</small>
+        <b id="ownerQueueCount">—</b>
+      </div>
+    </section>
+
+    <section class="owner-grid">
+      <div class="main-column">
+        <!-- Verification Notice / Onboarding Step Container -->
+        <div id="statusNoticeContainer"></div>
+
+        <!-- Live Pumps & Charger Management Panel (Active once approved by Admin) -->
+        <div class="panel emergency-panel">
+          <div class="panel-head">
+            <div>
+              <span class="eyebrow">ROADside ASSISTANCE</span>
+              <h2>Driver SOS requests</h2>
+              <p>Respond to drivers who need emergency charging assistance.</p>
+            </div>
+            <button class="btn btn-light btn-sm" onclick="loadOwnerEmergencies()">↻ Refresh</button>
+          </div>
+          <div id="ownerEmergencies">
+            <div class="loading">Checking emergency requests…</div>
+          </div>
+        </div>
+
+        <div class="panel" id="pumpsPanel">
+          <div class="panel-head">
+            <div>
+              <span class="eyebrow">ACTIVE INFRASTRUCTURE</span>
+              <h2>My charging pumps & chargers</h2>
+              <p>Control live pump availability for drivers in real-time.</p>
+            </div>
+          </div>
+          <div id="approvedChargersList">
+            <div class="loading">Loading pumps…</div>
+          </div>
+        </div>
+
+        <!-- Station Registration Form (Collapsible / Onboarding) -->
+        <div class="panel" id="stationFormPanel" style="display:none;">
+          <div class="panel-head">
+            <div>
+              <span class="eyebrow">STATION REGISTRATION</span>
+              <h2>Register a charging station</h2>
+              <p>Submit location, business documents, and chargers for administrative review.</p>
+            </div>
+            <span class="step-pill">ADMIN VERIFICATION</span>
+          </div>
+
+          <form id="stationForm" enctype="multipart/form-data" class="form">
+            <div class="form-section">
+              <h3>Station details</h3>
+              <div class="form-row">
+                <label>
+                  Station name
+                  <input name="stationName" placeholder="ChargeEase Nerul Hub" required>
+                </label>
+                <label>
+                  Government / business name
+                  <input name="govtName" placeholder="Registered business legal name" required>
+                </label>
+              </div>
+              <label>
+                Full address
+                <input name="address" placeholder="Street, building, landmark" required>
+              </label>
+              <div class="form-row three">
+                <label>
+                  City
+                  <input name="city" value="Navi Mumbai">
+                </label>
+                <label>
+                  State
+                  <input name="state" value="Maharashtra">
+                </label>
+                <label>
+                  PIN code
+                  <input name="pincode" inputmode="numeric" placeholder="400706">
+                </label>
+              </div>
+              <div class="form-row">
+                <label>
+                  Contact number
+                  <input name="contactNumber" placeholder="+91 90000 00000">
+                </label>
+                <label>
+                  Operating hours
+                  <input name="operatingHours" value="24 Hours">
+                </label>
+              </div>
+              <div class="form-row">
+                <label>
+                  Station photo
+                  <input name="stationPhoto" type="file" accept="image/*">
+                </label>
+                <label>
+                  Verification documents
+                  <input name="documents" type="file" multiple accept=".pdf,image/*">
+                </label>
+              </div>
+            </div>
+
+            <div class="form-section">
+              <h3>Station location coordinates</h3>
+              <p class="field-help">Search the address or landmark, use device GPS, or click the interactive map to pin coordinates.</p>
+              <div class="search-location">
+                <input id="placeSearch" autocomplete="street-address" placeholder="e.g. Nerul, Navi Mumbai, Maharashtra">
+                <button id="searchPlaceButton" type="button" class="btn btn-light" onclick="searchPlace()">Search</button>
+                <button type="button" class="btn btn-light" onclick="useCurrentLocation()">Use my location</button>
+              </div>
+              <div class="coord-row">
+                <label>
+                  Latitude
+                  <input name="latitude" id="lat" readonly required placeholder="Click map or search">
+                </label>
+                <label>
+                  Longitude
+                  <input name="longitude" id="lng" readonly required placeholder="Click map or search">
+                </label>
+              </div>
+              <div id="ownerMap"></div>
+            </div>
+
+            <div class="form-section">
+              <div class="section-inline">
+                <div>
+                  <h3>Charger specifications</h3>
+                  <p class="field-help">Configure connector types, DC/AC currents, power ratings, and charging fees.</p>
+                </div>
+                <button type="button" class="btn btn-light btn-sm" onclick="addCharger()">+ Add charger</button>
+              </div>
+              <div id="chargers"></div>
+            </div>
+
+            <button type="submit" class="btn btn-primary btn-wide">Submit station for verification →</button>
+            <div id="msg" class="form-msg"></div>
+          </form>
+        </div>
+
+        <!-- Performance Analytics Panel -->
+        <div class="panel">
+          <div class="panel-head">
+            <div>
+              <span class="eyebrow">PERFORMANCE ANALYTICS</span>
+              <h2>Owner performance</h2>
+              <p>Booking volume, completion rates, and simulated gross revenue.</p>
+            </div>
+            <button class="btn btn-light btn-sm" onclick="loadAnalytics()">↻ Refresh</button>
+          </div>
+          <div class="metric-grid mini-metrics">
+            <div class="metric-card">
+              <small>Reservations</small>
+              <b id="analyticsReservations">—</b>
+            </div>
+            <div class="metric-card">
+              <small>Completed</small>
+              <b id="analyticsCompleted">—</b>
+            </div>
+            <div class="metric-card">
+              <small>Simulated Revenue</small>
+              <b id="analyticsRevenue">—</b>
+            </div>
+            <div class="metric-card">
+              <small>Avg Duration</small>
+              <b id="analyticsDuration">—</b>
+            </div>
+          </div>
+          <div id="analyticsChart" class="simple-chart"></div>
+        </div>
+
+        <!-- AI Demand Intelligence Panel -->
+        <div class="panel">
+          <div class="panel-head">
+            <div>
+              <span class="eyebrow">AI / ML DEMAND FORECAST</span>
+              <h2>Station demand intelligence</h2>
+              <p>Real-time queue load, charger availability, and ML predicted demand levels.</p>
+            </div>
+          </div>
+          <div id="ownerAi" class="ai-owner-grid">
+            <div class="loading">Loading ML predictions…</div>
+          </div>
+        </div>
+      </div>
+
+      <aside class="side-column">
+        <div class="panel">
+          <div class="panel-head">
+            <div>
+              <h2>My stations</h2>
+              <p>Approval status and live charger controls.</p>
+            </div>
+          </div>
+          <div id="myStations" class="station-list">
+            <div class="loading">Loading stations…</div>
+          </div>
+        </div>
+
+        <div class="panel">
+          <div class="panel-head">
+            <div>
+              <h2>Waiting queue</h2>
+              <p>Live customer queue management.</p>
+            </div>
+          </div>
+          <div id="ownerQueue" class="queue-list">
+            <div class="loading">Loading queue…</div>
+          </div>
+        </div>
+
+        <div class="panel">
+          <div class="panel-head">
+            <div>
+              <h2>Maintenance</h2>
+              <p>Track reported charger hardware issues.</p>
+            </div>
+          </div>
+          <div id="maintenance" class="maintenance-list">
+            <div class="empty">Select a station to inspect maintenance logs.</div>
+          </div>
+        </div>
+      </aside>
+    </section>
+  </main>
+
+  <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+  <script src="/js/common.js"></script>
+  <script src="/js/map.js"></script>
+  <script src="/js/owner.js"></script>
+</body>
+</html>
