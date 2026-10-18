@@ -1,4 +1,4 @@
-# ChargeEase 2.0
+# ChargeEase 
 
 ChargeEase is a cost-free academic EV charging station reservation and queue-management prototype.
 
