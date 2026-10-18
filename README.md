@@ -159,3 +159,22 @@ OCPP can later be added as:
 `Physical Charger -> OCPP -> ChargeEase Backend -> Database / AI -> Web UI`
 
 The current project intentionally does not require physical charger hardware.
+<<<<<<< HEAD
+
+
+## New driver-experience features
+
+- **Emergency SOS:** The driver can send an SOS with optional GPS coordinates and a message. Approved station owners within 50 km receive in-app notifications and can accept or resolve the request from the owner dashboard. If the driver cannot share location, the SOS can still be sent without GPS. This is a prototype alert system, not a replacement for local emergency services.
+- **Location-first station discovery:** Use **Use my location** to prioritize nearby charging stations and see distance, available chargers and the starting price per kWh. Browser location access requires permission and the app to be opened in a supported browser context.
+- **Automatic reservation lifecycle:** Confirmed reservations switch to active at the start time. When the end time passes, they become completed and the charger returns to available unless another active reservation still uses it. The owner sees the most recent completed user's name and timestamp for each charger.
+- **Post-session feedback:** A completed, not-yet-reviewed reservation prompts the driver for a 1–5 star rating and optional comment. Feedback is displayed to other drivers when they open station feedback, and station ratings continue to update for owners/admin analytics.
+- **Refresh behavior:** The server checks expired reservations every 30 seconds while connected to MySQL; the owner SOS panel refreshes every 30 seconds.
+
+## Upgrade notes
+
+1. Keep a backup of your current folder and database before replacing files.
+2. Run the updated `database/schema.sql` only if you want the new SOS table created manually. The Node server also creates that table automatically on startup.
+3. Keep your own `.env` file locally. It is intentionally not included in the downloadable source archive because it can contain local database credentials. Create it from `.env.example`.
+4. Run `npm install`, then `npm start`.
+=======
+>>>>>>> d858b4d16aff5cc3abfd0583f7d766de8b1300a5

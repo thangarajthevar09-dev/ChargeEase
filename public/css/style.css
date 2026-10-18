@@ -2345,3 +2345,88 @@ a {
   padding: 3px 8px;
   border-radius: 6px;
 }
+<<<<<<< HEAD
+
+
+/* ChargeEase smart discovery, SOS and driver feedback enhancements */
+.location-status {
+  margin: 12px 0;
+  padding: 11px 14px;
+  border: 1px solid var(--line);
+  border-radius: 12px;
+  color: var(--text-muted);
+  background: var(--surface-2);
+  font-size: 13px;
+}
+.distance-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  border-radius: 999px;
+  padding: 4px 8px;
+  background: #eff6ff;
+  color: #1d4ed8;
+  font-size: 12px;
+  font-weight: 700;
+}
+.btn-danger {
+  color: #fff;
+  background: linear-gradient(135deg, #e11d48, #be123c);
+  box-shadow: 0 4px 14px rgba(225, 29, 72, .22);
+}
+.emergency-panel {
+  border: 1px solid rgba(225, 29, 72, .22);
+}
+.emergency-request {
+  padding: 15px;
+  margin: 10px 0;
+  border: 1px solid var(--line);
+  border-radius: 14px;
+  background: var(--surface);
+}
+.emergency-request p {
+  margin: 8px 0;
+  overflow-wrap: anywhere;
+}
+.emergency-request small {
+  color: var(--text-muted);
+}
+.feedback-item {
+  padding: 12px 0;
+  border-bottom: 1px solid var(--line);
+}
+.feedback-item:last-child {
+  border-bottom: 0;
+}
+.feedback-item p {
+  margin: 5px 0;
+  color: var(--text-muted);
+  overflow-wrap: anywhere;
+}
+.feedback-item small {
+  color: var(--text-muted);
+  font-size: 11px;
+}
+@media (max-width: 700px) {
+  .title-actions {
+    flex-wrap: wrap;
+  }
+  .title-actions .btn {
+    flex: 1 1 auto;
+  }
+}
+
+.last-used-details {
+  margin: 10px 0;
+  padding: 9px 11px;
+  border-radius: 10px;
+  background: var(--surface-2);
+  color: var(--text-muted);
+  font-size: 12px;
+  overflow-wrap: anywhere;
+}
+.last-used-details b {
+  color: var(--text);
+}
+=======
+>>>>>>> d858b4d16aff5cc3abfd0583f7d766de8b1300a5

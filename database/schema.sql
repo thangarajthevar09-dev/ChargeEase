@@ -262,3 +262,29 @@ CREATE TABLE IF NOT EXISTS station_demand_history (
   CONSTRAINT fk_demand_station FOREIGN KEY(station_id) REFERENCES charging_stations(id) ON DELETE CASCADE,
   UNIQUE KEY uq_demand_observation(station_id,observation_date,hour_of_day)
 );
+<<<<<<< HEAD
+
+
+-- Driver roadside SOS requests. Also ensured by server startup for existing installations.
+
+CREATE TABLE IF NOT EXISTS emergency_requests (
+  id BIGINT UNSIGNED NOT NULL AUTO_INCREMENT PRIMARY KEY,
+  user_id INT NOT NULL,
+  latitude DECIMAL(10,7) NULL,
+  longitude DECIMAL(10,7) NULL,
+  location_text VARCHAR(255) NULL,
+  message VARCHAR(1000) NULL,
+  status ENUM('OPEN','ACCEPTED','RESOLVED','CANCELLED') NOT NULL DEFAULT 'OPEN',
+  station_id INT NULL,
+  responder_owner_id INT NULL,
+  created_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  responded_at TIMESTAMP NULL DEFAULT NULL,
+  INDEX idx_emergency_status (status),
+  INDEX idx_emergency_user (user_id),
+  CONSTRAINT fk_emergency_user FOREIGN KEY(user_id) REFERENCES users(id) ON DELETE CASCADE,
+  CONSTRAINT fk_emergency_station FOREIGN KEY(station_id) REFERENCES charging_stations(id) ON DELETE SET NULL,
+  CONSTRAINT fk_emergency_owner FOREIGN KEY(responder_owner_id) REFERENCES users(id) ON DELETE SET NULL
+);
+
+=======
+>>>>>>> d858b4d16aff5cc3abfd0583f7d766de8b1300a5

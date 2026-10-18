@@ -1,3 +1,50 @@
+<<<<<<< HEAD
+async function loadOwnerEmergencies() {
+  const container = document.getElementById("ownerEmergencies");
+  if (!container) return;
+  try {
+    const rows = await api("/api/owner/emergencies");
+    container.innerHTML = rows.length ? rows.map(item => `
+      <article class="emergency-request">
+        <div class="section-inline">
+          <b>🆘 SOS #${item.id} · ${esc(item.user_name || "Driver")}</b>
+          <span class="status ${item.status === "OPEN" ? "PENDING" : "APPROVED"}">${esc(item.status)}</span>
+        </div>
+        <p>${esc(item.message || "Roadside charging assistance requested.")}</p>
+        <small>Phone: ${esc(item.user_mobile || "Not provided")} · ${dateTime(item.created_at)}</small>
+        ${item.location_text ? `<p>${esc(item.location_text)}</p>` : ""}
+        ${item.latitude != null && item.longitude != null ? `<p><a target="_blank" rel="noopener" href="https://www.google.com/maps?q=${Number(item.latitude)},${Number(item.longitude)}">📍 Open driver's location in Maps</a></p>` : ""}
+        <div class="station-actions">
+          ${item.status === "OPEN" ? `<button class="btn btn-primary btn-sm" onclick="respondToEmergency(${item.id}, 'ACCEPT')">Accept SOS</button>` : ""}
+          <button class="btn btn-light btn-sm" onclick="respondToEmergency(${item.id}, 'RESOLVE')">Mark resolved</button>
+        </div>
+      </article>
+    `).join("") : `<div class="empty">No open SOS requests. New requests will appear here.</div>`;
+  } catch (error) {
+    container.innerHTML = `<div class="empty">Could not load SOS requests. ${esc(error.message || "")}</div>`;
+  }
+}
+
+async function respondToEmergency(id, action) {
+  const promptText = action === "ACCEPT"
+    ? "Accept this SOS? You should contact the driver promptly."
+    : "Mark this SOS as resolved?";
+  if (!confirm(promptText)) return;
+  try {
+    const result = await api(`/api/owner/emergencies/${id}`, {
+      method: "PATCH",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ action })
+    });
+    toast(result.message || "SOS updated.");
+    await loadOwnerEmergencies();
+  } catch (error) {
+    toast(error.message || "Could not update SOS.", "error");
+  }
+}
+
+=======
+>>>>>>> d858b4d16aff5cc3abfd0583f7d766de8b1300a5
 let ownerMap;
 let ownerMarker;
 let chargerCount = 0;
@@ -13,6 +60,11 @@ document.addEventListener("DOMContentLoaded", async () => {
     setText("ownerName", session.user.name);
     setText("avatar", initials(session.user.name, "O"));
     await loadOwner();
+<<<<<<< HEAD
+    await loadOwnerEmergencies();
+    setInterval(loadOwnerEmergencies, 30000);
+=======
+>>>>>>> d858b4d16aff5cc3abfd0583f7d766de8b1300a5
     await loadQueue();
     await loadAnalytics();
     await loadOwnerAI();
@@ -362,6 +414,13 @@ async function renderPumpsView(approvedStations) {
                 <span>${charger.power_kw} kW</span>
                 <span style="font-weight:700; color:var(--text);">${money(charger.price_per_kwh)}/kWh</span>
               </div>
+<<<<<<< HEAD
+              <div class="last-used-details">
+                <b>Last used by:</b> ${charger.last_used_user ? esc(charger.last_used_user) : "No completed sessions yet"}
+                ${charger.last_used_at ? `<span> · ${dateTime(charger.last_used_at)}</span>` : ""}
+              </div>
+=======
+>>>>>>> d858b4d16aff5cc3abfd0583f7d766de8b1300a5
               <div class="pump-status-actions">
                 <button class="btn btn-sm btn-success ${charger.status === 'AVAILABLE' ? 'active-status' : ''}" onclick="setStatus(${charger.id},'AVAILABLE')">
                   ✓ Available

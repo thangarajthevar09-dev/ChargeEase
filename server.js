@@ -30,6 +30,31 @@ const pool = mysql.createPool({
   timezone: "local"
 });
 
+<<<<<<< HEAD
+
+// SOS and feedback support is stored in MySQL alongside the existing project data.
+async function ensureFeatureTables() {
+  await pool.query(`
+    CREATE TABLE IF NOT EXISTS emergency_requests (
+      id BIGINT UNSIGNED NOT NULL AUTO_INCREMENT PRIMARY KEY,
+      user_id BIGINT UNSIGNED NOT NULL,
+      latitude DECIMAL(10,7) NULL,
+      longitude DECIMAL(10,7) NULL,
+      location_text VARCHAR(255) NULL,
+      message VARCHAR(1000) NULL,
+      status ENUM('OPEN','ACCEPTED','RESOLVED','CANCELLED') NOT NULL DEFAULT 'OPEN',
+      station_id BIGINT UNSIGNED NULL,
+      responder_owner_id BIGINT UNSIGNED NULL,
+      created_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+      responded_at TIMESTAMP NULL DEFAULT NULL,
+      INDEX idx_emergency_status (status),
+      INDEX idx_emergency_user (user_id)
+    ) ENGINE=InnoDB
+  `);
+}
+
+=======
+>>>>>>> d858b4d16aff5cc3abfd0583f7d766de8b1300a5
 const storage = multer.diskStorage({
   destination(req, file, cb) {
     const folder = file.fieldname === "stationPhoto"
@@ -1152,17 +1177,135 @@ app.delete("/api/my/queue/:id", requireRole("USER"), async (req, res) => {
   res.json({ message: "Removed from queue." });
 });
 
+<<<<<<< HEAD
+
+// Driver SOS: creates an alert visible to approved nearby station owners.
+app.post("/api/emergency", requireRole("USER"), async (req, res) => {
+  try {
+    const latitude = req.body.latitude == null ? null : Number(req.body.latitude);
+    const longitude = req.body.longitude == null ? null : Number(req.body.longitude);
+    if ((latitude == null) !== (longitude == null) ||
+        (latitude != null && !validCoord(latitude, longitude))) {
+      return res.status(400).json({ error: "A valid latitude and longitude pair is required." });
+    }
+    const message = clean(req.body.message).slice(0, 1000) || "Driver needs roadside charging assistance.";
+    const [result] = await pool.query(
+      `INSERT INTO emergency_requests(user_id,latitude,longitude,location_text,message)
+       VALUES(?,?,?,?,?)`,
+      [req.session.user.id, latitude, longitude, clean(req.body.locationText).slice(0,255) || null, message]
+    );
+
+    // Notify owners of approved stations; exact distance is calculated by the UI/map.
+    const [owners] = await pool.query(`
+      SELECT DISTINCT s.owner_id
+      FROM charging_stations s
+      WHERE s.status='APPROVED' AND s.owner_id IS NOT NULL
+        AND (
+          ? IS NULL OR ? IS NULL OR
+          (s.latitude IS NOT NULL AND s.longitude IS NOT NULL AND
+            6371 * ACOS(LEAST(1, GREATEST(-1,
+              COS(RADIANS(?)) * COS(RADIANS(s.latitude)) *
+              COS(RADIANS(s.longitude) - RADIANS(?)) +
+              SIN(RADIANS(?)) * SIN(RADIANS(s.latitude))
+            ))) <= 50)
+        )
+    `, [latitude, longitude, latitude, longitude, latitude]);
+    for (const owner of owners) {
+      await notify(owner.owner_id, "Nearby driver SOS", `A driver has requested roadside assistance. SOS #${result.insertId}. Open your owner dashboard to respond.`, "EMERGENCY");
+    }
+    await audit(req, "EMERGENCY_CREATED", "EMERGENCY", result.insertId, { latitude, longitude });
+    res.status(201).json({ id: result.insertId, message: "SOS sent to approved station owners. Keep your phone available." });
+  } catch (error) {
+    console.error("SOS create failed:", error);
+    res.status(500).json({ error: "Could not send SOS. Please call local emergency/roadside assistance if you are in immediate danger." });
+  }
+});
+
+app.get("/api/owner/emergencies", requireRole("STATION_OWNER"), async (req, res) => {
+  try {
+    const [rows] = await pool.query(`
+      SELECT e.*,u.name user_name,u.mobile user_mobile,s.name station_name
+      FROM emergency_requests e
+      JOIN users u ON u.id=e.user_id
+      LEFT JOIN charging_stations s ON s.id=e.station_id
+      WHERE e.status IN ('OPEN','ACCEPTED')
+      ORDER BY CASE e.status WHEN 'OPEN' THEN 0 ELSE 1 END,e.created_at DESC
+      LIMIT 100
+    `);
+    res.json(rows);
+  } catch (error) {
+    console.error("SOS list failed:", error);
+    res.status(500).json({ error: "Could not load emergency requests." });
+  }
+});
+
+app.patch("/api/owner/emergencies/:id", requireRole("STATION_OWNER"), async (req, res) => {
+  try {
+    const action = clean(req.body.action).toUpperCase();
+    if (!["ACCEPT","RESOLVE"].includes(action)) {
+      return res.status(400).json({ error: "Action must be ACCEPT or RESOLVE." });
+    }
+    const [owned] = await pool.query(
+      "SELECT id FROM charging_stations WHERE owner_id=? AND status='APPROVED' ORDER BY id LIMIT 1",
+      [req.session.user.id]
+    );
+    if (!owned.length) return res.status(403).json({ error: "An approved station is required to respond to SOS." });
+    const status = action === "ACCEPT" ? "ACCEPTED" : "RESOLVED";
+    const [result] = await pool.query(`
+      UPDATE emergency_requests SET status=?,station_id=?,responder_owner_id=?,responded_at=NOW()
+      WHERE id=? AND status IN ('OPEN','ACCEPTED')
+    `, [status, owned[0].id, req.session.user.id, req.params.id]);
+    if (!result.affectedRows) return res.status(404).json({ error: "SOS not found or already closed." });
+    const [[request]] = await pool.query("SELECT user_id FROM emergency_requests WHERE id=?", [req.params.id]);
+    if (request) await notify(request.user_id, action === "ACCEPT" ? "SOS accepted" : "SOS resolved",
+      action === "ACCEPT" ? "A station owner has accepted your SOS and may contact you." : "Your SOS has been marked resolved by the station owner.", "EMERGENCY");
+    res.json({ message: action === "ACCEPT" ? "SOS accepted. Contact the driver using the provided details." : "SOS marked resolved." });
+  } catch (error) {
+    console.error("SOS response failed:", error);
+    res.status(500).json({ error: "Could not update SOS." });
+  }
+});
+
+app.get("/api/stations/:id/reviews", async (req, res) => {
+  try {
+    const [rows] = await pool.query(`
+      SELECT rv.rating,rv.review_text,rv.created_at,u.name user_name
+      FROM reviews rv JOIN users u ON u.id=rv.user_id
+      WHERE rv.station_id=? AND rv.status='VISIBLE'
+      ORDER BY rv.created_at DESC LIMIT 30
+    `, [req.params.id]);
+    res.json(rows);
+  } catch (error) {
+    res.status(500).json({ error: "Could not load station feedback." });
+  }
+});
+
+=======
+>>>>>>> d858b4d16aff5cc3abfd0583f7d766de8b1300a5
 app.post("/api/reviews", requireRole("USER"), async (req, res) => {
   try {
     const stationId = Number(req.body.stationId);
     const rating = Number(req.body.rating);
     const reviewText = clean(req.body.reviewText) || null;
     if (!stationId || rating < 1 || rating > 5) return res.status(400).json({ error: "Station and rating from 1 to 5 are required." });
+<<<<<<< HEAD
+    const requestedReservationId = Number(req.body.reservationId || 0);
+    const [completed] = await pool.query(`
+      SELECT r.id FROM reservations r
+      JOIN chargers c ON c.id=r.charger_id
+      WHERE r.user_id=? AND c.station_id=? AND r.status='COMPLETED'
+        AND (?=0 OR r.id=?)
+        AND NOT EXISTS (SELECT 1 FROM reviews existing WHERE existing.reservation_id=r.id AND existing.user_id=r.user_id)
+      ORDER BY r.end_time DESC LIMIT 1
+    `, [req.session.user.id, stationId, requestedReservationId, requestedReservationId]);
+    if (!completed.length) return res.status(400).json({ error: "A completed, not-yet-reviewed reservation at this station is required." });
+=======
     const [completed] = await pool.query(`
       SELECT r.id FROM reservations r JOIN chargers c ON c.id=r.charger_id
       WHERE r.user_id=? AND c.station_id=? AND r.status='COMPLETED' LIMIT 1
     `, [req.session.user.id, stationId]);
     if (!completed.length) return res.status(400).json({ error: "Complete a reservation at this station before reviewing it." });
+>>>>>>> d858b4d16aff5cc3abfd0583f7d766de8b1300a5
     const [result] = await pool.query(
       "INSERT INTO reviews(user_id,station_id,reservation_id,rating,review_text) VALUES(?,?,?,?,?)",
       [req.session.user.id, stationId, completed[0].id, rating, reviewText]
@@ -1397,9 +1540,65 @@ app.use((req, res, next) => {
   next();
 });
 
+<<<<<<< HEAD
+
+async function processExpiredReservations() {
+  try {
+    await pool.query(`
+      UPDATE reservations
+      SET status='ACTIVE'
+      WHERE status='CONFIRMED' AND start_time <= NOW() AND end_time > NOW()
+    `);
+    await pool.query(`
+      UPDATE chargers c
+      JOIN reservations r ON r.charger_id=c.id
+      SET c.status='OCCUPIED'
+      WHERE r.status='ACTIVE' AND r.start_time <= NOW() AND r.end_time > NOW()
+        AND c.status='AVAILABLE'
+    `);
+    const [expired] = await pool.query(`
+      SELECT r.id,r.user_id,r.charger_id,c.station_id,s.name station_name,c.charger_name
+      FROM reservations r
+      JOIN chargers c ON c.id=r.charger_id
+      JOIN charging_stations s ON s.id=c.station_id
+      WHERE r.status IN ('CONFIRMED','ACTIVE') AND r.end_time <= NOW()
+    `);
+    if (!expired.length) return;
+    await pool.query(`
+      UPDATE reservations
+      SET status='COMPLETED'
+      WHERE status IN ('CONFIRMED','ACTIVE') AND end_time <= NOW()
+    `);
+    for (const item of expired) {
+      await pool.query(`
+        UPDATE chargers c
+        SET c.status='AVAILABLE'
+        WHERE c.id=? AND c.status='OCCUPIED'
+          AND NOT EXISTS (
+            SELECT 1 FROM reservations r
+            WHERE r.charger_id=c.id AND r.status='ACTIVE'
+              AND r.start_time <= NOW() AND r.end_time > NOW()
+          )
+      `, [item.charger_id]);
+      await notify(item.user_id, "Charging session completed",
+        `Your reserved charging session at ${item.station_name} (${item.charger_name}) has ended. Please leave feedback about your experience.`, "RESERVATION");
+    }
+  } catch (error) {
+    console.error("Reservation completion monitor:", error.message);
+  }
+}
+
 app.listen(PORT, async () => {
   try {
     await pool.query("SELECT 1");
+    await ensureFeatureTables();
+    await processExpiredReservations();
+    setInterval(processExpiredReservations, 30000);
+=======
+app.listen(PORT, async () => {
+  try {
+    await pool.query("SELECT 1");
+>>>>>>> d858b4d16aff5cc3abfd0583f7d766de8b1300a5
     console.log(`ChargeEase running at http://localhost:${PORT}`);
     console.log(`Optional ML service expected at ${ML_URL}`);
   } catch (error) {
