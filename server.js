@@ -30,6 +30,7 @@ const pool = mysql.createPool({
   timezone: "local"
 });
 
+<<<<<<< HEAD
 
 // SOS and feedback support is stored in MySQL alongside the existing project data.
 async function ensureFeatureTables() {
@@ -52,6 +53,8 @@ async function ensureFeatureTables() {
   `);
 }
 
+=======
+>>>>>>> d858b4d16aff5cc3abfd0583f7d766de8b1300a5
 const storage = multer.diskStorage({
   destination(req, file, cb) {
     const folder = file.fieldname === "stationPhoto"
@@ -1174,6 +1177,7 @@ app.delete("/api/my/queue/:id", requireRole("USER"), async (req, res) => {
   res.json({ message: "Removed from queue." });
 });
 
+<<<<<<< HEAD
 
 // Driver SOS: creates an alert visible to approved nearby station owners.
 app.post("/api/emergency", requireRole("USER"), async (req, res) => {
@@ -1276,12 +1280,15 @@ app.get("/api/stations/:id/reviews", async (req, res) => {
   }
 });
 
+=======
+>>>>>>> d858b4d16aff5cc3abfd0583f7d766de8b1300a5
 app.post("/api/reviews", requireRole("USER"), async (req, res) => {
   try {
     const stationId = Number(req.body.stationId);
     const rating = Number(req.body.rating);
     const reviewText = clean(req.body.reviewText) || null;
     if (!stationId || rating < 1 || rating > 5) return res.status(400).json({ error: "Station and rating from 1 to 5 are required." });
+<<<<<<< HEAD
     const requestedReservationId = Number(req.body.reservationId || 0);
     const [completed] = await pool.query(`
       SELECT r.id FROM reservations r
@@ -1292,6 +1299,13 @@ app.post("/api/reviews", requireRole("USER"), async (req, res) => {
       ORDER BY r.end_time DESC LIMIT 1
     `, [req.session.user.id, stationId, requestedReservationId, requestedReservationId]);
     if (!completed.length) return res.status(400).json({ error: "A completed, not-yet-reviewed reservation at this station is required." });
+=======
+    const [completed] = await pool.query(`
+      SELECT r.id FROM reservations r JOIN chargers c ON c.id=r.charger_id
+      WHERE r.user_id=? AND c.station_id=? AND r.status='COMPLETED' LIMIT 1
+    `, [req.session.user.id, stationId]);
+    if (!completed.length) return res.status(400).json({ error: "Complete a reservation at this station before reviewing it." });
+>>>>>>> d858b4d16aff5cc3abfd0583f7d766de8b1300a5
     const [result] = await pool.query(
       "INSERT INTO reviews(user_id,station_id,reservation_id,rating,review_text) VALUES(?,?,?,?,?)",
       [req.session.user.id, stationId, completed[0].id, rating, reviewText]
@@ -1526,6 +1540,7 @@ app.use((req, res, next) => {
   next();
 });
 
+<<<<<<< HEAD
 
 async function processExpiredReservations() {
   try {
@@ -1579,6 +1594,11 @@ app.listen(PORT, async () => {
     await ensureFeatureTables();
     await processExpiredReservations();
     setInterval(processExpiredReservations, 30000);
+=======
+app.listen(PORT, async () => {
+  try {
+    await pool.query("SELECT 1");
+>>>>>>> d858b4d16aff5cc3abfd0583f7d766de8b1300a5
     console.log(`ChargeEase running at http://localhost:${PORT}`);
     console.log(`Optional ML service expected at ${ML_URL}`);
   } catch (error) {

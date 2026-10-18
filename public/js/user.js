@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 let driverCoordinates = null;
 
 function distanceKm(lat1, lon1, lat2, lon2) {
@@ -116,6 +117,8 @@ async function submitReservationFeedback(reservationId, stationId) {
   }
 }
 
+=======
+>>>>>>> d858b4d16aff5cc3abfd0583f7d766de8b1300a5
 let userMap;
 let userStations = [];
 let userVehicles = [];
@@ -166,7 +169,11 @@ function filteredStations() {
   const availability = document.getElementById("availabilityFilter")?.value;
   const connector = document.getElementById("connectorFilter")?.value;
   const power = Number(document.getElementById("powerFilter")?.value || 0);
+<<<<<<< HEAD
   const filtered = userStations.filter(station => {
+=======
+  return userStations.filter(station => {
+>>>>>>> d858b4d16aff5cc3abfd0583f7d766de8b1300a5
     const text = `${station.name} ${station.address} ${station.city} ${station.state}`.toLowerCase();
     const matchesSearch = !search || text.includes(search);
     const matchesAvailability = availability !== "available" || Number(station.available_chargers) > 0;
@@ -175,6 +182,7 @@ function filteredStations() {
     const matchesPower = !power || Number(station.max_power_kw || 0) >= power;
     return matchesSearch && matchesAvailability && matchesConnector && matchesPower;
   });
+<<<<<<< HEAD
   if (driverCoordinates) {
     filtered.forEach(station => {
       station.distance_km = distanceKm(
@@ -191,6 +199,8 @@ function filteredStations() {
     filtered.sort((a, b) => Number(b.available_chargers || 0) - Number(a.available_chargers || 0));
   }
   return filtered;
+=======
+>>>>>>> d858b4d16aff5cc3abfd0583f7d766de8b1300a5
 }
 
 function renderStations() {
@@ -218,13 +228,19 @@ function renderStations() {
           <span class="availability ${Number(station.available_chargers) ? "available" : "busy"}">${station.available_chargers || 0}/${station.total_chargers || 0} available</span>
           <span class="rating">★ ${Number(station.rating_average || 0).toFixed(1)} (${station.rating_count || 0})</span>
           <span class="price">From ${money(station.starting_price)}/kWh</span>
+<<<<<<< HEAD
           ${Number.isFinite(Number(station.distance_km)) && driverCoordinates ? `<span class="distance-badge">📍 ${station.distance_km.toFixed(1)} km away</span>` : ""}
+=======
+>>>>>>> d858b4d16aff5cc3abfd0583f7d766de8b1300a5
         </div>
       </div>
       <div class="station-actions">
         <button class="btn btn-primary btn-sm" onclick="openStation(${station.id})">View & reserve</button>
         <button class="btn btn-light btn-sm" onclick="joinQueue(${station.id})">Join queue</button>
+<<<<<<< HEAD
         <button class="btn btn-light btn-sm" onclick="showStationFeedback(${station.id})">★ Feedback</button>
+=======
+>>>>>>> d858b4d16aff5cc3abfd0583f7d766de8b1300a5
       </div>
     </article>
   `).join("") : `<div class="empty">No matching charging stations.</div>`;
@@ -306,6 +322,7 @@ async function loadReservations() {
     userReservations = await api("/api/my/reservations");
     setText("reservationCount", userReservations.length);
     const container = document.getElementById("reservations");
+<<<<<<< HEAD
     const pendingFeedback = userReservations.find(row =>
       row.status === "COMPLETED" &&
       !Number(row.feedback_submitted) &&
@@ -315,11 +332,17 @@ async function loadReservations() {
       sessionStorage.setItem(`feedback-prompted-${pendingFeedback.id}`, "1");
       setTimeout(() => submitReservationFeedback(pendingFeedback.id, pendingFeedback.station_id), 500);
     }
+=======
+>>>>>>> d858b4d16aff5cc3abfd0583f7d766de8b1300a5
     container.innerHTML = userReservations.length ? userReservations.slice(0, 10).map(row => `
       <div class="reservation-item">
         <div class="reservation-main"><b>${esc(row.station_name)}</b><p>${esc(row.charger_name)} · ${dateTime(row.start_time)} → ${dateTime(row.end_time)}</p></div>
         <div class="reservation-side"><span class="status ${statusClass(row.status)}">${esc(row.status)}</span><span>${money(row.estimated_cost)}</span></div>
+<<<<<<< HEAD
         <div class="reservation-extra"><span>AI duration: ${row.estimated_minutes || "—"} min</span><span>Payment: ${esc(row.payment_status)}</span>${["CONFIRMED", "ACTIVE"].includes(row.status) ? `<button class="btn btn-light btn-sm" onclick="cancelReservation(${row.id})">Cancel</button>` : ""}${row.payment_status === "PENDING" ? `<button class="btn btn-primary btn-sm" onclick="simulatePayment(${row.id})">Simulate payment</button>` : ""}${row.status === "COMPLETED" && !Number(row.feedback_submitted) ? `<button class="btn btn-light btn-sm" onclick="submitReservationFeedback(${row.id}, ${row.station_id || 0})">★ Leave feedback</button>` : row.status === "COMPLETED" ? `<span class="status APPROVED">Feedback sent</span>` : ""}</div>
+=======
+        <div class="reservation-extra"><span>AI duration: ${row.estimated_minutes || "—"} min</span><span>Payment: ${esc(row.payment_status)}</span>${["CONFIRMED", "ACTIVE"].includes(row.status) ? `<button class="btn btn-light btn-sm" onclick="cancelReservation(${row.id})">Cancel</button>` : ""}${row.payment_status === "PENDING" ? `<button class="btn btn-primary btn-sm" onclick="simulatePayment(${row.id})">Simulate payment</button>` : ""}</div>
+>>>>>>> d858b4d16aff5cc3abfd0583f7d766de8b1300a5
       </div>
     `).join("") : `<div class="empty">No reservations yet.</div>`;
   } catch (error) {

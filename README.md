@@ -159,6 +159,7 @@ OCPP can later be added as:
 `Physical Charger -> OCPP -> ChargeEase Backend -> Database / AI -> Web UI`
 
 The current project intentionally does not require physical charger hardware.
+<<<<<<< HEAD
 
 
 ## New driver-experience features
@@ -175,3 +176,5 @@ The current project intentionally does not require physical charger hardware.
 2. Run the updated `database/schema.sql` only if you want the new SOS table created manually. The Node server also creates that table automatically on startup.
 3. Keep your own `.env` file locally. It is intentionally not included in the downloadable source archive because it can contain local database credentials. Create it from `.env.example`.
 4. Run `npm install`, then `npm start`.
+=======
+>>>>>>> d858b4d16aff5cc3abfd0583f7d766de8b1300a5

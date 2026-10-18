@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 async function loadOwnerEmergencies() {
   const container = document.getElementById("ownerEmergencies");
   if (!container) return;
@@ -42,6 +43,8 @@ async function respondToEmergency(id, action) {
   }
 }
 
+=======
+>>>>>>> d858b4d16aff5cc3abfd0583f7d766de8b1300a5
 let ownerMap;
 let ownerMarker;
 let chargerCount = 0;
@@ -57,8 +60,11 @@ document.addEventListener("DOMContentLoaded", async () => {
     setText("ownerName", session.user.name);
     setText("avatar", initials(session.user.name, "O"));
     await loadOwner();
+<<<<<<< HEAD
     await loadOwnerEmergencies();
     setInterval(loadOwnerEmergencies, 30000);
+=======
+>>>>>>> d858b4d16aff5cc3abfd0583f7d766de8b1300a5
     await loadQueue();
     await loadAnalytics();
     await loadOwnerAI();
@@ -408,10 +414,13 @@ async function renderPumpsView(approvedStations) {
                 <span>${charger.power_kw} kW</span>
                 <span style="font-weight:700; color:var(--text);">${money(charger.price_per_kwh)}/kWh</span>
               </div>
+<<<<<<< HEAD
               <div class="last-used-details">
                 <b>Last used by:</b> ${charger.last_used_user ? esc(charger.last_used_user) : "No completed sessions yet"}
                 ${charger.last_used_at ? `<span> · ${dateTime(charger.last_used_at)}</span>` : ""}
               </div>
+=======
+>>>>>>> d858b4d16aff5cc3abfd0583f7d766de8b1300a5
               <div class="pump-status-actions">
                 <button class="btn btn-sm btn-success ${charger.status === 'AVAILABLE' ? 'active-status' : ''}" onclick="setStatus(${charger.id},'AVAILABLE')">
                   ✓ Available
