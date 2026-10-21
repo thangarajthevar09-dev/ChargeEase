@@ -1,0 +1,73 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Create account | ChargeEase</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Plus+Jakarta+Sans:wght@500;600;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="/css/style.css">
+</head>
+<body class="auth-page">
+  <div class="auth-shell">
+    <a class="brand auth-brand" href="/" aria-label="ChargeEase Home">
+      <span class="brand-mark">⚡</span>
+      <span>ChargeEase</span>
+    </a>
+    <div class="auth-grid">
+      <section class="auth-art">
+        <span class="eyebrow">JOIN CHARGEEASE</span>
+        <h1>One account for every charging stop.</h1>
+        <p>Create a personal EV driver profile or register as a certified station owner and start expanding your charging business.</p>
+        <div class="auth-points">
+          <span>✓ Drivers can book slots & join live queues</span>
+          <span>✓ Station owners can register & monetize chargers</span>
+          <span>✓ Transparent admin verification workflow</span>
+        </div>
+      </section>
+
+      <section class="auth-card">
+        <div class="auth-head">
+          <span class="eyebrow">GET STARTED</span>
+          <h2>Create account</h2>
+          <p>It only takes a minute to set up.</p>
+        </div>
+        <form id="reg" class="form">
+          <label>
+            Full name
+            <input name="name" placeholder="Surya Sharma" required autocomplete="name">
+          </label>
+          <div class="form-row">
+            <label>
+              Mobile number
+              <input name="mobile" inputmode="tel" placeholder="+91 98765 43210" autocomplete="tel">
+            </label>
+            <label>
+              Account type
+              <select name="role">
+                <option value="USER">EV Driver</option>
+                <option value="STATION_OWNER">Station Owner</option>
+              </select>
+            </label>
+          </div>
+          <label>
+            Email address
+            <input name="email" type="email" placeholder="you@example.com" required autocomplete="email">
+          </label>
+          <label>
+            Password
+            <input name="password" type="password" minlength="6" placeholder="At least 6 characters" required autocomplete="new-password">
+          </label>
+          <button type="submit" class="btn btn-primary btn-wide">Create account <span>→</span></button>
+        </form>
+        <div id="msg" class="form-msg"></div>
+        <p class="auth-switch">Already have an account? <a href="/login.html">Sign in</a></p>
+      </section>
+    </div>
+  </div>
+
+  <script src="/js/common.js"></script>
+  <script src="/js/register.js"></script>
+</body>
+</html>

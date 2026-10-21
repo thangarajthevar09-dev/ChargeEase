@@ -1,0 +1,103 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Admin Control Center | ChargeEase</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Plus+Jakarta+Sans:wght@500;600;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="/css/style.css">
+</head>
+<body class="app-page">
+  <header class="app-header">
+    <a class="brand" href="/" aria-label="ChargeEase Home">
+      <span class="brand-mark">⚡</span>
+      <span>ChargeEase <em>ADMIN</em></span>
+    </a>
+    <div class="user-nav">
+      <span id="adminName"></span>
+      <button class="avatar" id="avatar" title="Admin profile">A</button>
+      <button class="icon-btn" onclick="logout()" title="Sign out" aria-label="Sign out">↪</button>
+    </div>
+  </header>
+
+  <main class="dashboard">
+    <section class="dashboard-title">
+      <div>
+        <span class="eyebrow">⚡ PLATFORM CONTROL CENTER</span>
+        <h1>Operate the ChargeEase network.</h1>
+        <p>Audit stations, verify owner applications, inspect platform analytics, and manage support tickets.</p>
+      </div>
+    </section>
+
+    <section id="stats" class="metric-grid"></section>
+
+    <section class="admin-layout">
+      <div class="main-column">
+        <div class="panel">
+          <div class="panel-head">
+            <div>
+              <span class="eyebrow">STATIONS AUDIT</span>
+              <h2>Station verification</h2>
+              <p>Review newly onboarded stations, approve, reject, or request owner corrections.</p>
+            </div>
+          </div>
+          <div class="filter-row">
+            <input id="adminSearch" class="search-input" placeholder="⌕ Search station, owner name, email or address…" aria-label="Search station">
+            <select id="statusFilter" aria-label="Filter status">
+              <option value="all">All statuses</option>
+              <option>PENDING</option>
+              <option>CHANGES_REQUIRED</option>
+              <option>APPROVED</option>
+              <option>REJECTED</option>
+            </select>
+          </div>
+          <div id="adminStations" class="admin-list"></div>
+        </div>
+
+        <div id="review" class="panel review-panel" hidden></div>
+
+        <div class="panel">
+          <div class="panel-head">
+            <div>
+              <span class="eyebrow">AI / ML NETWORK INTELLIGENCE</span>
+              <h2>Network intelligence</h2>
+              <p>Aggregated real-time station demand, queue load, and wait time forecasts.</p>
+            </div>
+            <button class="btn btn-light btn-sm" onclick="loadAIOverview()">↻ Refresh</button>
+          </div>
+          <div id="aiOverview" class="ai-owner-grid"></div>
+        </div>
+
+        <div class="panel">
+          <div class="panel-head">
+            <div>
+              <span class="eyebrow">DRIVER SUPPORT</span>
+              <h2>Support requests & complaints</h2>
+              <p>Manage customer feedback and update resolution status.</p>
+            </div>
+            <button class="btn btn-light btn-sm" onclick="loadComplaints()">↻ Refresh</button>
+          </div>
+          <div id="adminComplaints" class="complaint-list"></div>
+        </div>
+      </div>
+
+      <aside class="side-column">
+        <div class="panel">
+          <div class="panel-head">
+            <div>
+              <h2>Audit activity</h2>
+              <p>Chronological platform events.</p>
+            </div>
+          </div>
+          <div id="audit" class="audit-list"></div>
+        </div>
+      </aside>
+    </section>
+  </main>
+
+  <script src="/js/common.js"></script>
+  <script src="/js/admin.js"></script>
+</body>
+</html>

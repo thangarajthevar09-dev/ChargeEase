@@ -1,0 +1,12 @@
+Model,Metric,Value
+Charging Duration,MAE (minutes),5.8312
+Charging Duration,RMSE (minutes),10.7786
+Charging Duration,R2 score,0.9912
+Queue Waiting Time,MAE (minutes),4.2198
+Queue Waiting Time,RMSE (minutes),5.1439
+Queue Waiting Time,R2 score,0.9877
+Station Demand,Accuracy,0.8167
+Station Demand,Precision,0.7647
+Station Demand,Recall,0.65
+Station Demand,F1 score,0.7027
+Station Demand,ROC-AUC,0.8719
